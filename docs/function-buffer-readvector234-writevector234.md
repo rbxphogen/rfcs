@@ -1,4 +1,4 @@
-# `buffer.writevector*` and `buffer.readvector*`
+# `buffer.writevector*f32` and `buffer.readvector*f32`
 
 **Status**: Open
 
@@ -33,30 +33,32 @@ Each `writef32` or `readf32` performs an individual `memcpy`, and temporarily co
 Adding the following four new methods would fill this performance gap.
 
 ```luau
-buffer.writevector2(buf : buffer, offset : number, vec : vector) : ()
-buffer.readvector2(buf : buffer, offset : number) : vector
+buffer.writevector2f32(buf : buffer, offset : number, vec : vector) : ()
+buffer.readvector2f32(buf : buffer, offset : number) : vector
 
-buffer.writevector3(buf : buffer, offset : number, vec : vector) : ()
-buffer.readvector3(buf : buffer, offset : number) : vector
+buffer.writevector3f32(buf : buffer, offset : number, vec : vector) : ()
+buffer.readvector3f32(buf : buffer, offset : number) : vector
 ```
+
+The `f32` suffix makes it explicit that these methods operate on 32-bit floats. Because the components are always stored as `f32`s, these methods can remain stable and well-defined even if the in-memory representation of `vector` changes in the future.
 
 Like all buffer read/write operations, byte order is little-endian. An error is thrown if the read or write would exceed the buffer's bounds.
 
-`buffer.writevector2(buf : buffer, offset : number, vec : vector) : ()`
+`buffer.writevector2f32(buf : buffer, offset : number, vec : vector) : ()`
 - Writes `vec.x` and `vec.y` as two contiguous 32-bit floats into `buf`, starting at `offset`.
 - equivalent to `buffer.writef32(buf, offset, vec.x); buffer.writef32(buf, offset + 4, vec.y)`
 
-`buffer.readvector2(buf : buffer, offset : number) : vector`
+`buffer.readvector2f32(buf : buffer, offset : number) : vector`
 - Constructs a new `vector`, whose `x` and `y` components are determined by reading two contiguous 32-bit floats from `buf` starting at `offset`.
 - The resulting vector's `z` component is zero.
 - If `LUA_VECTOR_SIZE` is 4, the `w` component of the resulting vector is also zero.
 - equivalent to `vector.create(buffer.readf32(buf, offset), buffer.readf32(buf, offset + 4))`
 
-`buffer.writevector3(buf : buffer, offset : number, vec : vector) : ()`
+`buffer.writevector3f32(buf : buffer, offset : number, vec : vector) : ()`
 - Writes `vec.x`, `vec.y`, and `vec.z` as three contiguous 32-bit floats into `buf`, starting at `offset`.
 - equivalent to `buffer.writef32(buf, offset, vec.x); buffer.writef32(buf, offset + 4, vec.y); buffer.writef32(buf, offset + 8, vec.z)`
 
-`buffer.readvector3(buf : buffer, offset : number) : vector`
+`buffer.readvector3f32(buf : buffer, offset : number) : vector`
 - Constructs a new `vector`, whose `x`, `y`, and `z` components are determined by reading three contiguous 32-bit floats from `buf` starting at `offset`.
 - If `LUA_VECTOR_SIZE` is 4, the `w` component of the resulting vector is also zero.
 - equivalent to `vector.create(buffer.readf32(buf, offset), buffer.readf32(buf, offset + 4), buffer.readf32(buf, offset + 8))`
@@ -64,15 +66,15 @@ Like all buffer read/write operations, byte order is little-endian. An error is 
 When `LUA_VECTOR_SIZE` is defined to be `4`, two additional methods are defined:
 
 ```luau
-buffer.writevector4(buf : buffer, offset : number, vec : vector) : ()
-buffer.readvector4(buf : buffer, offset : number) : vector
+buffer.writevector4f32(buf : buffer, offset : number, vec : vector) : ()
+buffer.readvector4f32(buf : buffer, offset : number) : vector
 ```
 
-`buffer.writevector4(buf : buffer, offset : number, vec : vector) : ()`
+`buffer.writevector4f32(buf : buffer, offset : number, vec : vector) : ()`
 - Writes `vec.x`, `vec.y`, `vec.z`, and `vec.w` as four contiguous 32-bit floats into `buf`, starting at `offset`.
 - equivalent to `buffer.writef32(buf, offset, vec.x); buffer.writef32(buf, offset + 4, vec.y); buffer.writef32(buf, offset + 8, vec.z); buffer.writef32(buf, offset + 12, vec.w)`
 
-`buffer.readvector4(buf : buffer, offset : number) : vector`
+`buffer.readvector4f32(buf : buffer, offset : number) : vector`
 - Constructs a new `vector`, whose `x`, `y`, `z`, and `w` components are determined by reading four contiguous 32-bit floats from `buf` starting at `offset`.
 - equivalent to `vector.create(buffer.readf32(buf, offset), buffer.readf32(buf, offset + 4), buffer.readf32(buf, offset + 8), buffer.readf32(buf, offset + 12))`
 
